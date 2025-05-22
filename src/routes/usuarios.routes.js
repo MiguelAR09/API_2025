@@ -7,15 +7,14 @@ import {
     patchUsuarios,
     deleteUsuario
 } from '../controladores/usuariosCtrl.js'
-import { verifyToken } from '../middlewares/verifiTkn.js'
 
 const router = Router()
 
-router.get('/usuarios', verifyToken,  getUsuarios)
-router.get('/usuarios/:id', verifyToken, getUsuariosxid)
-router.post('/usuarios', verifyToken, postUsuarios)
-router.put('/usuarios/:id', verifyToken, putUsuarios)
-router.patch('/usuarios/:id', verifyToken, patchUsuarios)
-router.delete('/usuarios/:id', verifyToken, deleteUsuario)
+router.get('/usuarios', getUsuarios)
+router.get('/usuarios/:id', getUsuariosxid)
+router.post('/usuarios', postUsuarios)
+router.put('/usuarios/:id', putUsuarios)
+router.patch('/usuarios/:id', patchUsuarios)
+router.delete('/usuarios/:id', deleteUsuario)
 
 export default router

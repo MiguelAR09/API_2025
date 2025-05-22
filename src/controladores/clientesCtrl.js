@@ -97,6 +97,30 @@ export const deleteCliente=async (req,res)=>{
     }
 }
 
+export const patchEstadoCliente = async (req, res) => {
+    try {
+        const { cli_id, cli_estado } = req.body;
+
+        if (!cli_id || !cli_estado) {
+            return res.status(400).json({ message: "Faltan datos necesarios" });
+        }
+
+        const [result] = await conmysql.query(
+            'UPDATE clientes SET cli_estado = ? WHERE cli_id = ?',
+            [cli_estado, cli_id]
+        );
+
+        if (result.affectedRows <= 0) {
+            return res.status(404).json({ message: "Cliente no encontrado" });
+        }
+
+        res.json({ message: "Estado actualizado correctamente" });
+
+    } catch (error) {
+        return res.status(500).json({ message: "Error en el servidor" });
+    }
+};
+
 /*INSERT INTO clientes(cli_identificacion, cli_nombre, cli_telefono, cli_correo, cli_direccion, cli_pais, cli_ciudad) 
 VALUES (?,?,?,?,?,?,?)*/
 

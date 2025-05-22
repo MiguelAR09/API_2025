@@ -1,13 +1,13 @@
 import {Router} from 'express'
-import {getClientes, getClientesxid, postClientes, putClientes, patchClientes, deleteCliente} from '../controladores/clientesCtrl.js'
-import { verifyToken } from '../middlewares/verifiTkn.js'
+import {getClientes, getClientesxid, postClientes, putClientes, patchClientes, deleteCliente, patchEstadoCliente} from '../controladores/clientesCtrl.js'
 const router=Router();
 //armar las rutas "URL"
-router.get('/clientes',verifyToken, getClientes)
-router.get('/clientes/:id',verifyToken, getClientesxid)
-router.post('/clientes',verifyToken, postClientes)
-router.put('/clientes/:id',verifyToken, putClientes)
-router.patch('/clientes/:id',verifyToken, patchClientes)
-router.delete('/clientes/:id',verifyToken, deleteCliente)
+router.get('/clientes',getClientes)
+router.get('/clientes/:id',getClientesxid)
+router.post('/clientes', postClientes)
+router.put('/clientes/:id',putClientes)
+router.patch('/clientes/:id',patchClientes)
+router.delete('/clientes/:id',deleteCliente)
+router.patch('/clientes/estado', patchEstadoCliente);
 
 export default router
