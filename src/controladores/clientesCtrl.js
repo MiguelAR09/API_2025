@@ -99,19 +99,31 @@ export const deleteCliente=async (req,res)=>{
 
 export const patchEstadoCliente = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { cli_id, cli_estado } = req.body;
+
+        // Validar datos obligatorios
+        if (cli_id == null || cli_estado == null) {
+            return res.status(400).json({ message: "Faltan datos necesarios" });
+        }
+
+        // Validar estado permitido
+        if (!['A', 'E'].includes(cli_estado)) {
+            return res.status(400).json({ message: "Estado no válido (debe ser 'A' o 'E')" });
+        }
 
         const [result] = await conmysql.query(
-            'UPDATE clientes SET cli_estado = "E" WHERE cli_id = ?',
-            [id]
+            'UPDATE clientes SET cli_estado = ? WHERE cli_id = ?',
+            [cli_estado, cli_id]
         );
 
         if (result.affectedRows <= 0) {
             return res.status(404).json({ message: "Cliente no encontrado" });
         }
 
-        res.json({ message: "Cliente eliminado (lógicamente)" });
+        res.json({ message: `Estado actualizado a '${cli_estado}'` });
+
     } catch (error) {
+        console.error("Error al actualizar estado del cliente:", error);
         return res.status(500).json({ message: "Error en el servidor" });
     }
 };
