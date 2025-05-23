@@ -99,23 +99,18 @@ export const deleteCliente=async (req,res)=>{
 
 export const patchEstadoCliente = async (req, res) => {
     try {
-        const { cli_id, cli_estado } = req.body;
-
-        if (!cli_id || !cli_estado) {
-            return res.status(400).json({ message: "Faltan datos necesarios" });
-        }
+        const { id } = req.params;
 
         const [result] = await conmysql.query(
-            'UPDATE clientes SET cli_estado = ? WHERE cli_id = ?',
-            [cli_estado, cli_id]
+            'UPDATE clientes SET cli_estado = "E" WHERE cli_id = ?',
+            [id]
         );
 
         if (result.affectedRows <= 0) {
             return res.status(404).json({ message: "Cliente no encontrado" });
         }
 
-        res.json({ message: "Estado actualizado correctamente" });
-
+        res.json({ message: "Cliente eliminado (lógicamente)" });
     } catch (error) {
         return res.status(500).json({ message: "Error en el servidor" });
     }
