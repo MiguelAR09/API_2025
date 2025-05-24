@@ -8,6 +8,6 @@ router.post('/clientes', postClientes)
 router.put('/clientes/:id',putClientes)
 router.patch('/clientes/:id',patchClientes)
 router.delete('/clientes/:id',deleteCliente)
-router.patch('/clientes/estado', patchEstadoCliente);
+router.patch('/clientes/:id', patchEstadoCliente);
 
 export default router
