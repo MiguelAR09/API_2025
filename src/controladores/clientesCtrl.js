@@ -98,23 +98,22 @@ export const deleteCliente = async (req, res) => {
 }
 
 export const patchEstadoCliente = async (req, res) => {
-    const { id } = req.params
+    const { id } = req.params; // ← viene de la URL
+  const { cli_estado } = req.body; // ← viene del cuerpo JSON
 
   try {
-    // Verificar si existe
-    const [cliente] = await pool.query('SELECT * FROM clientes WHERE id_cli = ?', [id])
+    const [rows] = await pool.query('SELECT * FROM clientes WHERE cli_id = ?', [id]);
 
-    if (cliente.length === 0) {
-      return res.status(404).json({ mensaje: 'Cliente no encontrado' })
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Cliente no encontrado' });
     }
 
-    // Cambiar estado a 'E'
-    await pool.query('UPDATE clientes SET cli_estado = ? WHERE id_cli = ?', ['E', id])
+    await pool.query('UPDATE clientes SET cli_estado = ? WHERE cli_id = ?', [cli_estado, id]);
 
-    res.json({ mensaje: 'Cliente desactivado correctamente' })
+    res.json({ message: 'Estado actualizado correctamente' });
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ mensaje: 'Error al desactivar el cliente' })
+    console.error(error);
+    res.status(500).json({ message: 'Error en el servidor' });
   }
 };
 
