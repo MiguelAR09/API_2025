@@ -31,16 +31,29 @@ export const getClientesxid = async (req, res) => {
 //insertar
 export const postClientes = async (req, res) => {
     try {
-        const { cli_identificacion, cli_nombre, cli_telefono, cli_correo, cli_direccion, cli_pais, cli_ciudad } = req.body
-        //console.log(req.body)
-        const [result] = await conmysql.query('INSERT INTO clientes(cli_identificacion, cli_nombre, cli_telefono, cli_correo, cli_direccion, cli_pais, cli_ciudad) VALUES (?,?,?,?,?,?,?)',
-            [cli_identificacion, cli_nombre, cli_telefono, cli_correo, cli_direccion, cli_pais, cli_ciudad])
+        const {
+            cli_identificacion,
+            cli_nombre,
+            cli_telefono,
+            cli_correo,
+            cli_direccion,
+            cli_pais,
+            cli_ciudad
+        } = req.body;
+
+        const cli_estado = 'A';
+
+        const [result] = await conmysql.query(
+            'INSERT INTO clientes(cli_identificacion, cli_nombre, cli_telefono, cli_correo, cli_direccion, cli_pais, cli_ciudad, cli_estado) VALUES (?,?,?,?,?,?,?,?)',
+            [cli_identificacion, cli_nombre, cli_telefono, cli_correo, cli_direccion, cli_pais, cli_ciudad, cli_estado]
+        );
+
         res.send({
             id: result.insertId
-        })
+        });
 
     } catch (error) {
-        return res.status(500).json({ message: "error en el servidor" })
+        return res.status(500).json({ message: "error en el servidor" });
     }
 }
 
@@ -98,22 +111,22 @@ export const deleteCliente = async (req, res) => {
 }
 
 export const patchEstadoCliente = async (req, res) => {
-    const { id } = req.params; // ← viene de la URL
-  const { cli_estado } = req.body; // ← viene del cuerpo JSON
+    try {
+    const { id } = req.params;
+    const { cli_estado } = req.body;
 
-  try {
-    const [rows] = await pool.query('SELECT * FROM clientes WHERE cli_id = ?', [id]);
+    const [result] = await conmysql.query('UPDATE clientes SET cli_estado = ? WHERE cli_id = ?', [cli_estado, id]);
 
-    if (rows.length === 0) {
+    if (result.affectedRows <= 0) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
 
-    await pool.query('UPDATE clientes SET cli_estado = ? WHERE cli_id = ?', [cli_estado, id]);
+    const [row] = await conmysql.query('SELECT * FROM clientes WHERE cli_id = ?', [id]);
+    res.json(row[0]);
 
-    res.json({ message: 'Estado actualizado correctamente' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error en el servidor' });
+    return res.status(500).json({ message: 'Error en el servidor' });
   }
 };
 
