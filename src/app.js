@@ -9,6 +9,7 @@ import pedidosdetalleRoutes from './routes/pedidosdetalle.routes.js'
 import productosRoutes from './routes/productos.routes.js'
 import usuariosRoutes from './routes/usuarios.routes.js'
 import authRoutes from './routes/auth.routes.js';
+import confirmarPedidoRoutes from './routes/pedidoCompleto.routes.js'
 
 //definir los modulos de entrada
 const __filemane=fileURLToPath(import.meta.url);
@@ -33,6 +34,7 @@ app.use('/api', pedidosdetalleRoutes)
 app.use('/api', productosRoutes)
 app.use('/api', usuariosRoutes)
 app.use('/api/auth', authRoutes);
+app.use('/api', confirmarPedidoRoutes)
 
 app.use((red,resp,next)=>{
     resp.status(400).json({

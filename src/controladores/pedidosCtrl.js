@@ -64,6 +64,9 @@ export const patchPedidos = async (req, res) => {
     }
 }
 
+
+
+
 export const deletePedido = async (req, res) => {
     try {
         const [result] = await conmysql.query('DELETE FROM pedidos WHERE ped_id=?', [req.params.id])
@@ -73,3 +76,45 @@ export const deletePedido = async (req, res) => {
         return res.status(500).json({ message: "error en el servidor" })
     }
 }
+export const confirmarPedido = async (req, res) => {
+  const { cliente_id, carrito } = req.body;
+  const usuario_id = req.usuario.usr_id;
+
+  if (!cliente_id || !Array.isArray(carrito) || carrito.length === 0) {
+    return res.status(400).json({ mensaje: 'Datos incompletos' });
+  }
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const [pedidoResult] = await conn.query(
+      'INSERT INTO pedidos (ped_fecha, cliente_id, usuario_id) VALUES (NOW(), ?, ?)',
+      [cliente_id, usuario_id]
+    );
+
+    const pedidoId = pedidoResult.insertId;
+
+    for (let item of carrito) {
+      await conn.query(
+        'INSERT INTO pedidos_detalle (pedido_id, prod_id, cantidad, precio_unitario) VALUES (?, ?, ?, ?)',
+        [pedidoId, item.prod_id, item.cantidad, item.prod_precio]
+      );
+
+      // actualizar stock
+      await conn.query(
+        'UPDATE productos SET prod_stock = prod_stock - ? WHERE prod_id = ?',
+        [item.cantidad, item.prod_id]
+      );
+    }
+
+    await conn.commit();
+    res.json({ mensaje: 'Pedido confirmado', pedido_id: pedidoId });
+  } catch (err) {
+    await conn.rollback();
+    console.error(err);
+    res.status(500).json({ mensaje: 'Error al confirmar pedido' });
+  } finally {
+    conn.release();
+  }
+};
