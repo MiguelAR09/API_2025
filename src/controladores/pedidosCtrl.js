@@ -76,7 +76,6 @@ export const deletePedido = async (req, res) => {
         return res.status(500).json({ message: "error en el servidor" })
     }
 }
-import { conmysql } from '../BD.js';
 
 export const confirmarPedido = async (req, res) => {
   const { cliente_id, carrito } = req.body;
