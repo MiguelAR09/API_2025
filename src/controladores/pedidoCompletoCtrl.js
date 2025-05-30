@@ -3,7 +3,7 @@ import { conmysql } from '../BD.js'
 // Confirmar un pedido con todos sus detalles
 export const confirmarPedido = async (req, res) => {
     const { cli_id, usr_id, productos } = req.body
-    const ped_estado = 'pendiente'
+    const ped_estado = '1'
     const ped_fecha = new Date()
 
     const conn = await conmysql.getConnection()
