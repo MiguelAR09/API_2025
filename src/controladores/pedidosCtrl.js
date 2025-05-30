@@ -113,7 +113,11 @@ export const confirmarPedido = async (req, res) => {
   } catch (err) {
     await conn.rollback();
     console.error('Error al confirmar pedido:', err);
-    res.status(500).json({ mensaje: 'Error al confirmar pedido' });
+res.status(500).json({
+  success: false,
+  message: 'Error al confirmar pedido',
+  error: err.message, // <-- para ver más detalle
+})
   } finally {
     conn.release();
   }
